@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Be.Af.Slider</title>
+    <link href="be-af-slider/be.af.slider.css" rel="stylesheet">
+    <style>
+        .be-af-slider-container {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="be-af-slider-container" id="slider-1" data-before="demo/before.jpg" data-after="demo/after.jpg"></div>
+<div class="be-af-slider-container" id="slider-2" data-before="demo/before.jpg" data-after="demo/after.jpg"></div>
+
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+<script src="be-af-slider/be.af.slider.js"></script>
+<script>
+    $('#slider-1').beAfSlider();
+
+    $('#slider-2').beAfSlider({
+        direction: 'vertical'
+    });
+</script>
+</body>
+</html>
