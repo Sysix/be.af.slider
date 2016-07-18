@@ -1,9 +1,9 @@
-(function ($, document) {
+(function ($, document, window) {
     'use strict';
 
     $.beAfSlider = function () {
 
-        var VERSION = '1.0.0';
+        var VERSION = '1.0.1';
 
         this.defaultOptions = {
             direction: 'horizontal',
@@ -16,7 +16,9 @@
 
             callbacks: {
                 afterBuild: $.noop,
-                beforePercent: $.noop
+                beforePercent: $.noop,
+                beforeResize: $.noop,
+                afterResize: $.noop
             },
 
             template: {
@@ -50,14 +52,15 @@
                 var beforeImg = beAfSlider.getElement().data('before') || beAfSlider.getOption('before'),
                     afterImg = beAfSlider.getElement().data('after') || beAfSlider.getOption('after');
 
+                var x = 0;
                 $.each([beforeImg, afterImg], function (i, source) {
                     var image = new Image();
                     image.src = source;
                     image.onload = function () {
+                        x++;
                         beAfSlider.images[i] = $('<img>').attr('src', source);
 
-                        console.log(beAfSlider.images);
-                        if (i == 1) {
+                        if (x == 2) {
                             callback();
                         }
                     }
@@ -78,6 +81,25 @@
                 }
 
                 return event.originalEvent.touches[0].pageY;
+            },
+
+            /**
+             * @param {beAfSlider} beAfSlider
+             */
+            onWindowResize: function (beAfSlider) {
+                beAfSlider.getOption('callbacks')['beforeResize'].bind(beAfSlider)();
+
+                if (window.innerWidth > beAfSlider._after.removeClass('be-af-slider-max-width').width()) {
+                    beAfSlider._before.removeClass('be-af-slider-max-width');
+                    beAfSlider._after.removeClass('be-af-slider-max-width');
+                    beAfSlider._hidden.removeClass('be-af-slider-max-width');
+                } else {
+                    beAfSlider._before.addClass('be-af-slider-max-width');
+                    beAfSlider._after.addClass('be-af-slider-max-width');
+                    beAfSlider._hidden.addClass('be-af-slider-max-width');
+                }
+
+                beAfSlider.getOption('callbacks')['afterResize'].bind(beAfSlider)();
             }
         }
     };
@@ -85,18 +107,16 @@
     beAfSlider.prototype = {
 
         init: function () {
-            var self = this;
-
             this.setOption('isMoving', false);
 
-            beAfSliderIntern().preLoad(this, function () {
-                self.build();
-            });
+            beAfSliderIntern().preLoad(this, this.build.bind(this));
 
             return this;
         },
 
         build: function () {
+            var hiddenImage = this.images[0].clone();
+
             this.getElement().addClass(this.getOption('direction'));
 
             this._slider = $(this.getOption('template')['slider']);
@@ -110,7 +130,7 @@
             this._after.append(this.images[1]);
             this.getElement().append(this._after);
 
-            this._hidden = this.images[0].clone().addClass('be-af-slider-hidden');
+            this._hidden = hiddenImage.addClass('be-af-slider-hidden');
             this.getElement().append(this._hidden);
 
             if (this.getOption('initListeners')) {
@@ -127,6 +147,11 @@
         initListeners: function () {
             var self = this;
 
+            beAfSliderIntern().onWindowResize(self);
+            $(window).on('resize', function () {
+                beAfSliderIntern().onWindowResize(self);
+            });
+
             this._slider.on('mousedown touchstart', function () {
                 self.setOption('isMoving', true);
                 self.getElement().addClass('active');
@@ -141,17 +166,20 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    var base,
+                    var start,
+                        base,
                         current;
 
                     if (self.getOption('direction') == 'horizontal') {
-                        base = self.getElement().offset().left + self._hidden.width();
-                        current = beAfSliderIntern().getDragPointerX(e);
+                        start = self.getElement().offset().left;
+                        base = self._hidden.width();
+                        current = beAfSliderIntern().getDragPointerX(e) - start;
                     } else {
-                        base = self.getElement().offset().top + self._hidden.height();
-                        current = beAfSliderIntern().getDragPointerY(e);
+                        start = self.getElement().offset().top;
+                        base = self._hidden.height();
+                        current = beAfSliderIntern().getDragPointerY(e) - start;
                     }
-                    
+
                     self.setPercent(current * 100 / base);
 
                 })
@@ -218,4 +246,4 @@
 
     return this;
 
-})(jQuery, document);
+})(jQuery, document, window);
