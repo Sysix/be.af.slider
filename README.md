@@ -56,9 +56,9 @@ Here's the full list:
 
 | Template      | Default                                     | Description                                               |
 |---------------|---------------------------------------------|-----------------------------------------------------------|
-| slider        | <div class="be-af-slider-slider"></div>     | The Draggable Slider                                      |
-| before        | <div class="be-af-slider-before"></div>     | The Before Picture Wrapper                                |
-| after         | <div class="be-af-slider-after"></div>      | The After Picture Wrapper                                 |
+| slider        | `<div class="be-af-slider-slider"></div>`   | The Draggable Slider                                      |
+| before        | `<div class="be-af-slider-before"></div>`   | The Before Picture Wrapper                                |
+| after         | `<div class="be-af-slider-after"></div>`    | The After Picture Wrapper                                 |
 
 
 ## Advance
