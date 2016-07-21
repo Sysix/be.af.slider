@@ -224,9 +224,7 @@
                 cssProperty = 'height';
                 cssPropertySlider = 'top';
             }
-
-            console.log(percent);
-
+            
             if (percent < this.getOption('minPercent')) {
                 percent = this.getOption('minPercent');
             }
@@ -234,8 +232,6 @@
             if (percent > this.getOption('maxPercent')) {
                 percent = this.getOption('maxPercent');
             }
-
-            console.log(percent);
 
             this.percent = percent;
 
