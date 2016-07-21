@@ -17,7 +17,7 @@ $('#element').beAfSlider({
 Here's the full list:
 
 | Option        | DOM Attribute         | Default           |  Description                                                                   |
-|---------------|------------------------ ------------------|--------------------------------------------------------------------------------|
+|---------------|-----------------------|-------------------|--------------------------------------------------------------------------------|
 | direction     | `data-direction`      | horizontal        | Slider goes `horizontal` or `vertical`                                         |
 | before        | `data-before`         | null              | URL for the before image                                                       |
 | after         | `data-after`          | null              | URL for the after image                                                        |
