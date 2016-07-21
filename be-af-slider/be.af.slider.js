@@ -3,7 +3,7 @@
 
     $.beAfSlider = function () {
 
-        var VERSION = '1.0.1';
+        var VERSION = '1.0.2';
 
         this.defaultOptions = {
             direction: 'horizontal',
@@ -12,7 +12,10 @@
             after: null,
 
             initListeners: true,
+
             startPercent: 50,
+            minPercent: 0,
+            maxPercent: 100,
 
             callbacks: {
                 afterBuild: $.noop,
@@ -32,7 +35,6 @@
     };
 
     var beAfSlider = function (element, options) {
-        this.el = element;
         this._el = $(element);
 
         this.images = {};
@@ -49,8 +51,8 @@
              * @param {function} callback
              */
             preLoad: function (beAfSlider, callback) {
-                var beforeImg = beAfSlider.getElement().data('before') || beAfSlider.getOption('before'),
-                    afterImg = beAfSlider.getElement().data('after') || beAfSlider.getOption('after');
+                var beforeImg = beAfSlider.getOption('before'),
+                    afterImg = beAfSlider.getOption('after');
 
                 var x = 0;
                 $.each([beforeImg, afterImg], function (i, source) {
@@ -83,23 +85,73 @@
                 return event.originalEvent.touches[0].pageY;
             },
 
-            /**
-             * @param {beAfSlider} beAfSlider
-             */
-            onWindowResize: function (beAfSlider) {
-                beAfSlider.getOption('callbacks')['beforeResize'].bind(beAfSlider)();
+            onWindowResize: function () {
+                this.getOption('callbacks')['beforeResize'].bind(this)();
 
-                if (window.innerWidth > beAfSlider._after.removeClass('be-af-slider-max-width').width()) {
-                    beAfSlider._before.removeClass('be-af-slider-max-width');
-                    beAfSlider._after.removeClass('be-af-slider-max-width');
-                    beAfSlider._hidden.removeClass('be-af-slider-max-width');
+                if (window.innerWidth > this._after.removeClass('be-af-slider-max-width').width()) {
+                    this._before.removeClass('be-af-slider-max-width');
+                    this._after.removeClass('be-af-slider-max-width');
+                    this._hidden.removeClass('be-af-slider-max-width');
                 } else {
-                    beAfSlider._before.addClass('be-af-slider-max-width');
-                    beAfSlider._after.addClass('be-af-slider-max-width');
-                    beAfSlider._hidden.addClass('be-af-slider-max-width');
+                    this._before.addClass('be-af-slider-max-width');
+                    this._after.addClass('be-af-slider-max-width');
+                    this._hidden.addClass('be-af-slider-max-width');
                 }
 
-                beAfSlider.getOption('callbacks')['afterResize'].bind(beAfSlider)();
+                this.getOption('callbacks')['afterResize'].bind(this)();
+            },
+
+            onMoveStart: function () {
+                this.setOption('isMoving', true);
+                this.getElement().addClass('active');
+            },
+
+            onMoving: function (e) {
+                if (!this.getOption('isMoving')) {
+                    return this;
+                }
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                var start,
+                    base,
+                    current;
+
+                if (this.getOption('direction') == 'horizontal') {
+                    start = this.getElement().offset().left;
+                    base = this._hidden.width();
+                    current = beAfSliderIntern().getDragPointerX(e) - start;
+                } else {
+                    start = this.getElement().offset().top;
+                    base = this._hidden.height();
+                    current = beAfSliderIntern().getDragPointerY(e) - start;
+                }
+
+                this.setPercent(current * 100 / base);
+            },
+
+            onMoveEnd: function () {
+                this.setOption('isMoving', false);
+                this.getElement().removeClass('active');
+            },
+
+            setDataOptions: function () {
+                var element = this.getElement(),
+                    dataOption = {
+                        'direction': 'direction',
+                        'percent': 'startPercent',
+                        'before': 'before',
+                        'after': 'after',
+                        'min-percent': 'minPercent',
+                        'max-percent': 'maxPercent'
+                    };
+
+                $.each(dataOption, function (data, option) {
+                    if (element.data(data)) {
+                        this.setOption(option, element.data(data));
+                    }
+                }.bind(this));
             }
         }
     };
@@ -109,6 +161,8 @@
         init: function () {
             this.setOption('isMoving', false);
 
+            beAfSliderIntern().setDataOptions.bind(this)();
+
             beAfSliderIntern().preLoad(this, this.build.bind(this));
 
             return this;
@@ -116,6 +170,7 @@
 
         build: function () {
             var hiddenImage = this.images[0].clone();
+
 
             this.getElement().addClass(this.getOption('direction'));
 
@@ -145,48 +200,15 @@
         },
 
         initListeners: function () {
-            var self = this;
 
-            beAfSliderIntern().onWindowResize(self);
-            $(window).on('resize', function () {
-                beAfSliderIntern().onWindowResize(self);
-            });
+            beAfSliderIntern().onWindowResize.bind(this)();
+            $(window).on('resize', beAfSliderIntern().onWindowResize.bind(this));
 
-            this._slider.on('mousedown touchstart', function () {
-                self.setOption('isMoving', true);
-                self.getElement().addClass('active');
-            });
+            this._slider.on('mousedown touchstart', beAfSliderIntern().onMoveStart.bind(this));
 
             $(document)
-                .on('mousemove touchmove', function (e) {
-                    if (!self.getOption('isMoving')) {
-                        return this;
-                    }
-
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    var start,
-                        base,
-                        current;
-
-                    if (self.getOption('direction') == 'horizontal') {
-                        start = self.getElement().offset().left;
-                        base = self._hidden.width();
-                        current = beAfSliderIntern().getDragPointerX(e) - start;
-                    } else {
-                        start = self.getElement().offset().top;
-                        base = self._hidden.height();
-                        current = beAfSliderIntern().getDragPointerY(e) - start;
-                    }
-
-                    self.setPercent(current * 100 / base);
-
-                })
-                .on('mouseup touchend', function () {
-                    self.setOption('isMoving', false);
-                    self.getElement().removeClass('active');
-                });
+                .on('mousemove touchmove', beAfSliderIntern().onMoving.bind(this))
+                .on('mouseup touchend', beAfSliderIntern().onMoveEnd.bind(this));
 
             return this;
         },
@@ -203,13 +225,17 @@
                 cssPropertySlider = 'top';
             }
 
-            if (percent < 0) {
-                percent = 0;
+            console.log(percent);
+
+            if (percent < this.getOption('minPercent')) {
+                percent = this.getOption('minPercent');
             }
 
-            if (percent > 100) {
-                percent = 100;
+            if (percent > this.getOption('maxPercent')) {
+                percent = this.getOption('maxPercent');
             }
+
+            console.log(percent);
 
             this.percent = percent;
 
