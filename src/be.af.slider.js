@@ -3,7 +3,7 @@
 
     $.beAfSlider = function () {
 
-        var VERSION = '1.0.2';
+        var VERSION = '1.0.3';
 
         this.defaultOptions = {
             direction: 'horizontal',

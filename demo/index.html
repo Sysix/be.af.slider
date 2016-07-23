@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Be.Af.Slider</title>
+    <link href="../dist/be.af.slider.min.css" rel="stylesheet">
+    <style>
+        .be-af-slider-container {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="be-af-slider-container" data-before="before.jpg" data-after="after.jpg"></div>
+<div class="be-af-slider-container" data-before="before.jpg" data-after="after.jpg" data-direction="vertical"></div>
+<div class="be-af-slider-container" data-before="before.jpg" data-after="after.jpg" data-percent="20"></div>
+<div class="be-af-slider-container" data-before="before.jpg" data-after="after.jpg" data-min-percent="20" data-max-percent="80"></div>
+
+<script src="../bower_components/jquery/jquery.min.js"></script>
+<script src="../dist/be.af.slider.min.js"></script>
+<script>
+    $('.be-af-slider-container').beAfSlider();
+</script>
+</body>
+</html>

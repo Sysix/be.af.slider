@@ -1,0 +1,14 @@
+{
+  "name": "be.af.slider",
+  "version": "1.0.3",
+  "homepage": "https://github.com/Sysix/be.af.slider",
+  "authors": [
+    "Alexander S. <sysix@sysix-coding.de>"
+  ],
+  "description": "An simple customizable before/after slider",
+  "licence": "MIT",
+  "devDependencies": {
+    "grunt-contrib-cssmin": "^1.0.1",
+    "grunt-contrib-uglify": "^2.0.0"
+  }
+}
