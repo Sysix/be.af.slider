@@ -24,11 +24,23 @@ module.exports = function (grunt) {
                     extDot: 'last'
                 }]
             }
-        }
+        },
+
+        coveralls: {
+
+            target: {
+                // LCOV coverage file (can be string, glob or array)
+                src: 'coverage-results/extra-results-*.info',
+                options: {
+                    // Any options for just this target
+                }
+            },
+        },
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-coveralls');
 
     grunt.registerTask('build', ['cssmin', 'uglify']);
 
