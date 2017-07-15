@@ -1,5 +1,6 @@
 {
   "name": "be.af.slider",
+  "version": "2.0.0",
   "homepage": "https://github.com/Sysix/be.af.slider",
   "authors": [
     "Alexander S. <sysix@sysix-coding.de>"
@@ -9,9 +10,6 @@
     "src/be.af.slider.js",
     "src/be.af.slider.css"
   ],
-  "dependencies": {
-    "jquery": "~1.8"
-  },
   "keywords": [
     "jquery",
     "slider",

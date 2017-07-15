@@ -17,10 +17,13 @@
 <div class="be-af-slider-container" data-before="before.jpg" data-after="after.jpg" data-percent="20"></div>
 <div class="be-af-slider-container" data-before="before.jpg" data-after="after.jpg" data-min-percent="20" data-max-percent="80"></div>
 
-<script src="../bower_components/jquery/jquery.min.js"></script>
-<script src="../dist/be.af.slider.min.js"></script>
+<script src="../src/be.af.slider.js"></script>
 <script>
-    $('.be-af-slider-container').beAfSlider();
+    var elements = document.getElementsByClassName('be-af-slider-container');
+
+    Array.prototype.forEach.call(elements, function(el) {
+        window.beAfSlider.create(el);
+    });
 </script>
 </body>
 </html>
