@@ -29,13 +29,9 @@ module.exports = function (grunt) {
         coveralls: {
 
             target: {
-                // LCOV coverage file (can be string, glob or array)
-                src: 'coverage-results/extra-results-*.info',
-                options: {
-                    // Any options for just this target
-                }
-            },
-        },
+                src: 'src/*.js'
+            }
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
